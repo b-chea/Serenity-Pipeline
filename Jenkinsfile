@@ -25,7 +25,30 @@ pipeline {
 			}
 		}
 
-		stage('Create Test Execution in Jira') {
+		stage('Crear Incidencia Tipo Test') {
+			steps {
+				script {
+					withCredentials([usernamePassword(credentialsId: 'jenkins-credentials-local', usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_AUTH_PSW')]) {
+						def authHeader = "Basic " + "${JIRA_USER}:${JIRA_AUTH_PSW}".bytes.encodeBase64().toString()
+
+						bat """
+                            curl -X POST ^
+                            -H "Authorization: ${authHeader}" ^
+                            -H "Content-Type: application/json" ^
+                            -H "Accept: application/json" ^
+                            --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"${JIRA_ISSUE_KEY}\\" }, \\"summary\\": \\"Test para ejecución automatizada\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Test creado para automatización de pruebas\\",}] }] }, \\"issuetype\\": { \\"name\\": \\"Test\\" } } }" ^
+                            "${JIRA_URL}" > response_test.json
+                        """
+
+						def testKey = readFile('response_test.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
+						env.TEST_KEY = testKey
+						echo "Test Key: ${env.TEST_KEY}"
+					}
+				}
+			}
+		}
+
+		stage('Crear Test Execution en Jira') {
 			steps {
 				script {
 					withCredentials([usernamePassword(credentialsId: 'jenkins-credentials-local', usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_AUTH_PSW')]) {
@@ -37,12 +60,11 @@ pipeline {
                             -H "Content-Type: application/json" ^
                             -H "Accept: application/json" ^
                             --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"${JIRA_ISSUE_KEY}\\" }, \\"summary\\": \\"Ejecución de pruebas automatizadas\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Ejecución de test automatizados desde Jenkins\\"}]}] }, \\"issuetype\\": { \\"name\\": \\"Test Execution\\" } } }" ^
-                            "${JIRA_URL}" > response.json
+                            "${JIRA_URL}" > response_execution.json
                         """
 
-						def key = readFile('response.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
-						env.TEST_EXECUTION_KEY = key
-
+						def executionKey = readFile('response_execution.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
+						env.TEST_EXECUTION_KEY = executionKey
 						echo "Test Execution Key: ${env.TEST_EXECUTION_KEY}"
 					}
 				}
@@ -73,7 +95,7 @@ pipeline {
 			}
 		}
 
-		stage('Update Test Results in Xray') {
+		stage('Actualizar Resultado en Xray') {
 			steps {
 				script {
 					withCredentials([usernamePassword(credentialsId: 'jenkins-credentials-local', usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_AUTH_PSW')]) {
@@ -140,7 +162,30 @@ pipeline {
 			}
 		}
 
-		stage('Create Test Execution in Jira') {
+		stage('Crear Incidencia Tipo Test') {
+			steps {
+				script {
+					withCredentials([usernamePassword(credentialsId: 'jenkins-credentials-local', usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_AUTH_PSW')]) {
+						def authHeader = "Basic " + "${JIRA_USER}:${JIRA_AUTH_PSW}".bytes.encodeBase64().toString()
+
+						bat """
+                            curl -X POST ^
+                            -H "Authorization: ${authHeader}" ^
+                            -H "Content-Type: application/json" ^
+                            -H "Accept: application/json" ^
+                            --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"${JIRA_ISSUE_KEY}\\" }, \\"summary\\": \\"Test para ejecución automatizada\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Test creado para automatización de pruebas\\",}] }] }, \\"issuetype\\": { \\"name\\": \\"Test\\" } } }" ^
+                            "${JIRA_URL}" > response_test.json
+                        """
+
+						def testKey = readFile('response_test.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
+						env.TEST_KEY = testKey
+						echo "Test Key: ${env.TEST_KEY}"
+					}
+				}
+			}
+		}
+
+		stage('Crear Test Execution en Jira') {
 			steps {
 				script {
 					withCredentials([usernamePassword(credentialsId: 'jenkins-credentials-local', usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_AUTH_PSW')]) {
@@ -152,12 +197,11 @@ pipeline {
                             -H "Content-Type: application/json" ^
                             -H "Accept: application/json" ^
                             --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"${JIRA_ISSUE_KEY}\\" }, \\"summary\\": \\"Ejecución de pruebas automatizadas\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Ejecución de test automatizados desde Jenkins\\"}]}] }, \\"issuetype\\": { \\"name\\": \\"Test Execution\\" } } }" ^
-                            "${JIRA_URL}" > response.json
+                            "${JIRA_URL}" > response_execution.json
                         """
 
-						def key = readFile('response.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
-						env.TEST_EXECUTION_KEY = key
-
+						def executionKey = readFile('response_execution.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
+						env.TEST_EXECUTION_KEY = executionKey
 						echo "Test Execution Key: ${env.TEST_EXECUTION_KEY}"
 					}
 				}
@@ -188,7 +232,7 @@ pipeline {
 			}
 		}
 
-		stage('Update Test Results in Xray') {
+		stage('Actualizar Resultado en Xray') {
 			steps {
 				script {
 					withCredentials([usernamePassword(credentialsId: 'jenkins-credentials-local', usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_AUTH_PSW')]) {
