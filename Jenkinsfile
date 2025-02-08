@@ -51,17 +51,13 @@ pipeline {
 						def authHeader = "Basic " + "${JIRA_USER}:${JIRA_AUTH_PSW}".bytes.encodeBase64().toString()
 
 						bat """
-                            curl -X POST ^
-                            -H "Authorization: ${authHeader}" ^
-                            -H "Content-Type: application/json" ^
-                            -H "Accept: application/json" ^
-                            --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"${JIRA_ISSUE_KEY}\\" }, \\"summary\\": \\"Ejecucion de pruebas automatizadas\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Ejecucion de test automatizados desde Jenkins\\"}]}] }, \\"issuetype\\": { \\"name\\": \\"Test Execution\\" } } }" ^
-                            "${JIRA_URL}" > response_execution.json
+                        curl -X POST ^
+                        -H "Authorization: ${authHeader}" ^
+                        -H "Content-Type: application/json" ^
+                        -H "Accept: application/json" ^
+                        --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"PLPROJECT1\\" }, \\"summary\\": \\"Prueba desde Jenkins\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Creando un issue test desde Jenkins\\"}]}] }, \\"issuetype\\": { \\"name\\": \\"Test Execution\\" } } }" ^
+                        "${JIRA_URL}"
                         """
-
-						def executionKey = readFile('response_execution.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
-						env.TEST_EXECUTION_KEY = executionKey
-						echo "Test Execution Key: ${env.TEST_EXECUTION_KEY}"
 					}
 				}
 			}
@@ -69,10 +65,7 @@ pipeline {
 
 		stage('Preparar Tests') {
 			steps {
-				script {
-					bat 'mkdir "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\SerenityPipeline\\src\\test\\java\\runner"'
-					bat 'xcopy "C:\\Users\\user\\IdeaProjects\\Expo\\src\\test\\java\\runner\\*.*" "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\SerenityPipeline\\src\\test\\java\\runner\\" /S /E /I /Y'
-				}
+
 			}
 		}
 
