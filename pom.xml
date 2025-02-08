@@ -119,6 +119,11 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/main/resources</directory>
+            </testResource>
+        </testResources>
         <pluginManagement>
             <plugins>
                 <plugin>
