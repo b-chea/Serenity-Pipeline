@@ -32,17 +32,13 @@ pipeline {
 						def authHeader = "Basic " + "${JIRA_USER}:${JIRA_AUTH_PSW}".bytes.encodeBase64().toString()
 
 						bat """
-                            curl -X POST ^
-                            -H "Authorization: ${authHeader}" ^
-                            -H "Content-Type: application/json" ^
-                            -H "Accept: application/json" ^
-                            --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"${JIRA_ISSUE_KEY}\\" }, \\"summary\\": \\"Test para ejecucion automatizada\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Test creado para automatizacion de pruebas\\",}] }] }, \\"issuetype\\": { \\"name\\": \\"Test\\" } } }" ^
-                            "${JIRA_URL}" > response_test.json
+                        curl -X POST ^
+                        -H "Authorization: ${authHeader}" ^
+                        -H "Content-Type: application/json" ^
+                        -H "Accept: application/json" ^
+                        --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"PLPROJECT1\\" }, \\"summary\\": \\"Prueba desde Jenkins\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Creando un issue desde Jenkins\\"}]}] }, \\"issuetype\\": { \\"name\\": \\"Test\\" } } }" ^
+                        "${JIRA_URL}"
                         """
-
-						def testKey = readFile('response_test.json').trim().replaceAll('.*"key":"([^"]+)".*', '$1')
-						env.TEST_KEY = testKey
-						echo "Test Key: ${env.TEST_KEY}"
 					}
 				}
 			}
