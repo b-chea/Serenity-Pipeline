@@ -44,28 +44,18 @@ pipeline {
 			}
 		}
 
-		stage('Crear Test Execution en Jira') {
+		stage('Leer Excel y Crear Acciones de Prueba') {
 			steps {
 				script {
-					withCredentials([usernamePassword(credentialsId: 'jenkins-credentials-local', usernameVariable: 'JIRA_USER', passwordVariable: 'JIRA_AUTH_PSW')]) {
-						def authHeader = "Basic " + "${JIRA_USER}:${JIRA_AUTH_PSW}".bytes.encodeBase64().toString()
-
-						bat """
-                        curl -X POST ^
-                        -H "Authorization: ${authHeader}" ^
-                        -H "Content-Type: application/json" ^
-                        -H "Accept: application/json" ^
-                        --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"PLPROJECT1\\" }, \\"summary\\": \\"Prueba desde Jenkins\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Creando un issue test desde Jenkins\\"}]}] }, \\"issuetype\\": { \\"name\\": \\"Test Execution\\" } } }" ^
-                        "${JIRA_URL}"
-                        """
+					// Aquí usas un script Groovy para leer el Excel y generar las acciones de prueba
+					// Esto podría implicar leer cada fila del Excel y crear pruebas basadas en esos datos
+					def excelData = readExcel(file: 'src/main/resources/test-data/data.xlsx') // Si usas el plugin Apache POI
+					excelData.each { row ->
+						// Procesar cada fila, por ejemplo, creando una acción de prueba
+						echo "Creando acción de prueba para: ${row['Action']}"
+						// Aquí deberías generar las pruebas en función de los datos del Excel
 					}
 				}
-			}
-		}
-
-		stage('Preparar Tests') {
-			steps {
-
 			}
 		}
 
