@@ -142,6 +142,23 @@ pipeline {
 			}
 		}
 
+
+		stage('Subir archivo CSV') {
+			steps {
+				script {
+					// Aquí defines el archivo CSV que subirás, ajusta la ruta si es necesario
+					def csvFile = 'src/main/resources/test-data/data.csv'
+					echo "Subiendo el archivo CSV..."
+					// Lógica para leer y procesar el archivo CSV
+					def csvData = readCSV file: csvFile
+					csvData.each { row ->
+						// Procesar cada fila del CSV
+						echo "Procesando: ${row['TestName']}"
+					}
+				}
+			}
+		}
+
 		stage('Crear Incidencia Tipo Test') {
 			steps {
 				script {
@@ -156,22 +173,6 @@ pipeline {
                         --data "{ \\"fields\\": { \\"project\\": { \\"key\\": \\"PLPROJECT1\\" }, \\"summary\\": \\"Prueba desde Jenkins\\", \\"description\\": { \\"type\\": \\"doc\\", \\"version\\": 1, \\"content\\": [{\\"type\\": \\"paragraph\\", \\"content\\": [{\\"type\\": \\"text\\", \\"text\\": \\"Creando un issue test desde Jenkins\\"}]}] }, \\"issuetype\\": { \\"name\\": \\"Test\\" } } }" ^
                         "${JIRA_URL}"
                         """
-					}
-				}
-			}
-		}
-
-		stage('Leer Excel y Crear Acciones de Prueba') {
-			steps {
-				script {
-					// Usar el plugin Pipeline Utility Steps para leer el archivo Excel
-					def excelData = readExcel(file: 'src/main/resources/test-data/data.xlsx') // Lee el archivo Excel
-
-					// Procesar cada fila del archivo Excel
-					excelData.each { row ->
-						// Ejemplo: Usamos el valor de una columna llamada 'Action' (ajusta esto a las columnas de tu archivo Excel)
-						echo "Creando acción de prueba para: ${row['Action']}"
-						// Aquí deberías generar las pruebas en función de los datos del Excel
 					}
 				}
 			}
@@ -221,6 +222,7 @@ pipeline {
 				}
 			}
 		}
+
 	}
 
 	post {
